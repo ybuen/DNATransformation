@@ -4,31 +4,28 @@ import java.util.HashMap;
 
 public class DnaSearch {
 
-
-
     public static void findShortestPath(String start, String goal) {
         Search frontSearch = new Search(goal);
-        Search backSearch = new Search(start);
 
-        frontSearch.setFirst(start);
-        backSearch.setFirst(goal);
+        frontSearch.addNewState(start, null);
 
-        DnaState current = new DnaState("ABCD", null, 100 ); // PLACEHOLDER
-        DnaState otherEnd;
+        DnaState current = null; // PLACEHOLDER
 
-        while (current.numDifferentChars > 0) {
+        while (!frontSearch.queue.isEmpty()) {
             current = frontSearch.iterateSearch();
-            if (backSearch.isVisited(current.dnaString)) {
-                otherEnd = backSearch.visited.get(current.dnaString);
+            if (current.dnaString.equals(goal)) {
                 break;
             }
+        }
 
-            current = backSearch.iterateSearch();
-            if (frontSearch.isVisited(current.dnaString)) {
-                otherEnd = frontSearch.visited.get(current.dnaString);
-                break;
+        if (current == null || !current.dnaString.equals(goal)) {
+            System.out.println("Impossible to reach new strand");
+        } else {
+            while (current != null) {
+                System.out.print(current.dnaString + " ");
+                current = current.previous;
+                System.out.println();
             }
-            
         }
 
     }
@@ -44,15 +41,11 @@ public class DnaSearch {
             this.goalString = goalString;
         }
 
-        public void setFirst(String firstString) {
-            DnaState newState = addNewState(firstString, null);
-            visited.put(firstString, newState);
-        }
-
         public DnaState iterateSearch() {
             DnaState current = queue.poll();
-            visited.put(current.dnaString, current);
-            addAdjacents(current);
+            if (visited.get(current.dnaString) == current) {
+                addAdjacents(current);
+            }
             return current;
         }
 
@@ -60,7 +53,9 @@ public class DnaSearch {
             ArrayList<String> possibleStrings = state.getPossibleAdjacents();
 
             for (String possibleString:possibleStrings) {
-                if (!isVisited(possibleString)) {
+                DnaState existing = visited.get(possibleString);
+
+                if (existing == null || state.steps + 1 < existing.steps) {
                     addNewState(possibleString, state);
                 }
             }
@@ -69,12 +64,11 @@ public class DnaSearch {
         public DnaState addNewState(String dnaString, DnaState previous) {
             int numDifferentChars = DnaState.getNumDifferentChars(goalString, dnaString);
             DnaState newState = new DnaState(dnaString, previous, numDifferentChars);
+
+            visited.put(dnaString, newState);
+
             queue.offer(newState);
             return newState;
-        }
-
-        public boolean isVisited(String dnaString) {
-            return visited.containsKey(dnaString);
         }
 
     }

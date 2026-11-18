@@ -11,7 +11,7 @@ public class DnaState implements Comparable<DnaState>{
 
     final DnaState previous;
     final public String dnaString;
-    final public int length, steps, numDifferentChars;
+    final public int length, numDifferentChars, steps;
 
     public DnaState(String dnaString, DnaState previous, int numDifferentChars) {
         this.dnaString = dnaString;
