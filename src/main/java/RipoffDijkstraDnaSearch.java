@@ -2,7 +2,7 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.HashMap;
 
-public class RipOffDijkstraDnaSearch {
+public class RipoffDijkstraDnaSearch {
 
     public static void findShortestPath(String start, String goal) {
         Search frontSearch = new Search(goal);
