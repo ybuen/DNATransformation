@@ -6,7 +6,6 @@ public class DnaSearch {
 
     public static void findShortestPath(String start, String goal) {
         Search frontSearch = new Search(goal);
-
         frontSearch.addNewState(start, null);
 
         DnaState current = null; // PLACEHOLDER
@@ -61,14 +60,13 @@ public class DnaSearch {
             }
         }
 
-        public DnaState addNewState(String dnaString, DnaState previous) {
+        public void addNewState(String dnaString, DnaState previous) {
             int numDifferentChars = DnaState.getNumDifferentChars(goalString, dnaString);
             DnaState newState = new DnaState(dnaString, previous, numDifferentChars);
 
             visited.put(dnaString, newState);
 
             queue.offer(newState);
-            return newState;
         }
 
     }
