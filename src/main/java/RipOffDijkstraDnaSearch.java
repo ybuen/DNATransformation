@@ -2,15 +2,17 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.HashMap;
 
-public class DnaSearch {
+public class RipOffDijkstraDnaSearch {
 
     public static void findShortestPath(String start, String goal) {
         Search frontSearch = new Search(goal);
         frontSearch.addNewState(start, null);
+        int explored = 0;
 
         DnaState current = null; // PLACEHOLDER
 
         while (!frontSearch.queue.isEmpty()) {
+            explored ++;
             current = frontSearch.iterateSearch();
             if (current.dnaString.equals(goal)) {
                 break;
@@ -20,11 +22,13 @@ public class DnaSearch {
         if (current == null || !current.dnaString.equals(goal)) {
             System.out.println("Impossible to reach new strand");
         } else {
+            System.out.println("Possible in " + current.steps + " steps:");
             while (current != null) {
                 System.out.print(current.dnaString + " ");
                 current = current.previous;
                 System.out.println();
             }
+            System.out.println("Explored " + explored + " possible strings");
         }
 
     }
