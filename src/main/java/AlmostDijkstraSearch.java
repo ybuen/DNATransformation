@@ -37,12 +37,12 @@ public class AlmostDijkstraSearch {
             if (current == null) {
                 return null;
             }
-            else if (isGoalString(current.dnaString)) {
+            else if (current.numDifferentChars == 0) {
                 break;
             }
         }
 
-        if (current == null || !current.dnaString.equals(goalString)) {
+        if (current == null || current.numDifferentChars > 0) {
             return null;
         }
 
@@ -55,7 +55,7 @@ public class AlmostDijkstraSearch {
         if (current == null) {
             return null;
         }
-        if (visited.get(current.dnaString) == current && !isGoalString(current.dnaString)) {
+        if (visited.get(current.dnaString) == current && current.numDifferentChars > 0) {
             // Check first if current state isn't outdated or if it isn't already the goal string
             numExplored ++;
             addAdjacents(current);
