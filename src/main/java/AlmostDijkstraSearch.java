@@ -3,7 +3,6 @@ import java.util.Collections;
 import java.util.PriorityQueue;
 import java.util.HashMap;
 
-
 public class AlmostDijkstraSearch {
     public final PriorityQueue<DnaState> queue;
     public final HashMap<String, DnaState> visited;
@@ -16,10 +15,8 @@ public class AlmostDijkstraSearch {
         this.goalString = goalString;
     }
 
-    public ArrayList<String> findShortestPath(String start) {
-        numExplored = 0;
-        queue.clear();
-        visited.clear();
+    public ArrayList<String> findShortestPath(String start) { // iterate until reaches goal or queue is empty
+        resetSearchParameters();
 
         if (start.length() != goalString.length()) {
             return null;
@@ -38,17 +35,15 @@ public class AlmostDijkstraSearch {
                 break;
             }
         }
-
         if (current == null || !current.dnaString.equals(goalString)) {
             return null;
         }
 
         System.out.println("Explored " + numExplored + " possible strands");
-
         return getPath(current);
     }
 
-    public DnaState iterateSearch() {
+    public DnaState iterateSearch() { // Single iteration of the algorithm
         DnaState current = queue.poll();
 
         if (current == null) {
@@ -56,7 +51,7 @@ public class AlmostDijkstraSearch {
         }
 
         if (visited.get(current.dnaString) == current && !isGoalReached(current)) {
-            // Check if current state isnt a previous unoptimal one
+            // Check if current state isn't a previous unoptimal or if it has already reached the goal
             numExplored ++;
             addAdjacents(current);
         }
@@ -64,6 +59,7 @@ public class AlmostDijkstraSearch {
         return current;
     }
 
+    // HELPER METHODS ---------------------------------------------------------------
     private void addAdjacents(DnaState state) {
         ArrayList<String> possibleStrings = state.getPossibleAdjacents();
 
@@ -85,11 +81,6 @@ public class AlmostDijkstraSearch {
         queue.offer(newState);
     }
 
-    public void changeGoal(String goalString) {
-        this.goalString = goalString;
-    }
-
-
     private ArrayList<String> getPath(DnaState state) {
         ArrayList<String> path = new ArrayList<>();
 
@@ -102,9 +93,19 @@ public class AlmostDijkstraSearch {
         return path;
     }
 
+    // Getters and Setters -----------------------------------------------------------
+    public void changeGoal(String goalString) {
+        this.goalString = goalString;
+    }
+
     private boolean isGoalReached(DnaState current) {
         return current.dnaString.equals(goalString);
     }
 
+    private void resetSearchParameters() {
+        numExplored = 0;
+        queue.clear();
+        visited.clear();
+    }
 }
 
