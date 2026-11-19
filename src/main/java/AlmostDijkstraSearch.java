@@ -7,8 +7,8 @@ public class AlmostDijkstraSearch {
     final static private char[] POSSIBLE_CHARS = {'A', 'C', 'T', 'G'};
 
     final private StringTrie TRIE = new StringTrie();
-    public final PriorityQueue<DnaState> queue;
-    public final HashMap<String, DnaState> visited;
+    private final PriorityQueue<DnaState> queue;
+    private final HashMap<String, DnaState> visited;
     private String goalString;
     private int numExplored;
 
@@ -19,6 +19,10 @@ public class AlmostDijkstraSearch {
     }
 
     public ArrayList<String> findShortestPath(String start, String goal) { // iterate until reaches goal or queue is empty
+        if (start == null || goal == null) {
+            return null;
+        }
+
         resetSearchParameters(goal);
 
         if (start.length() != goalString.length()) {
@@ -37,6 +41,7 @@ public class AlmostDijkstraSearch {
                 break;
             }
         }
+
         if (current == null || !current.dnaString.equals(goalString)) {
             return null;
         }

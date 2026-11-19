@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class Main {
     public static void main(String[] args) {
         AlmostDijkstraSearch newSearch = new AlmostDijkstraSearch("DNAsequences.txt");
-        ArrayList<String> path = newSearch.findShortestPath("CATAGTA", "GGTGCCG");
+        ArrayList<String> path = newSearch.findShortestPath("AAATT", "GAAAC");
         printPathResults(path);
 
     }

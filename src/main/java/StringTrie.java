@@ -21,7 +21,9 @@ public class StringTrie {
             }
             scanner.close();
 
-        } catch (FileNotFoundException _) {}
+        } catch (FileNotFoundException e) {
+            System.out.println("Trie was not loaded, file not found.");
+        }
     }
 
     public void addString(String string) {
