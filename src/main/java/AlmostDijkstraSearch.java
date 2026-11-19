@@ -12,10 +12,10 @@ public class AlmostDijkstraSearch {
     private String goalString;
     private int numExplored;
 
-    public AlmostDijkstraSearch() {
+    public AlmostDijkstraSearch(String pathName) {
         this.queue = new PriorityQueue<>();
         this.visited = new HashMap<>();
-        TRIE.addStringsFromFile("DNAsequences.txt");
+        TRIE.addStringsFromFile(pathName);
     }
 
     public ArrayList<String> findShortestPath(String start, String goal) { // iterate until reaches goal or queue is empty
