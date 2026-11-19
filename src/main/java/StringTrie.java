@@ -1,4 +1,7 @@
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class StringTrie {
 
@@ -6,6 +9,19 @@ public class StringTrie {
 
     public StringTrie() {
         this.root = new TrieNode(' ');
+    }
+
+    public void addStringsFromFile(String pathName) { // Add all strings from a file pathname if file is found
+        try {
+
+            Scanner scanner = new Scanner(new File(pathName));
+            while (scanner.hasNextLine()) {
+                String dna = scanner.nextLine().trim();
+                this.addString(dna);
+            }
+            scanner.close();
+
+        } catch (FileNotFoundException _) {}
     }
 
     public void addString(String string) {
@@ -19,7 +35,7 @@ public class StringTrie {
         current.setEnd(true);
     }
 
-    public boolean search(String string) { // SIMILAR TO ADD STRING BUT ITS DIFFERENT
+    public boolean search(String string) { // SIMILAR TO ADD STRING BUT IT'S DIFFERENT
         TrieNode current = root;
         char[] chars = string.toCharArray();
 
@@ -33,7 +49,6 @@ public class StringTrie {
         return current.isEnd();
     }
 
-
     // NODE CLASS --------------------------------------------------------------------------------------
     private static class TrieNode {
 
@@ -43,7 +58,7 @@ public class StringTrie {
 
         public TrieNode(char CHAR) {
             this.CHAR = CHAR;
-            this.branches = new ArrayList<TrieNode>();
+            this.branches = new ArrayList<>();
             this.isEnd = false;
         }
 

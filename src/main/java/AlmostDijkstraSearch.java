@@ -1,22 +1,25 @@
+import java.util.HashMap;
+import java.util.PriorityQueue;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.PriorityQueue;
-import java.util.HashMap;
 
 public class AlmostDijkstraSearch {
+    final static private char[] POSSIBLE_CHARS = {'A', 'C', 'T', 'G'};
+
+    final private StringTrie TRIE = new StringTrie();
     public final PriorityQueue<DnaState> queue;
     public final HashMap<String, DnaState> visited;
     private String goalString;
     private int numExplored;
 
-    public AlmostDijkstraSearch(String goalString) {
+    public AlmostDijkstraSearch() {
         this.queue = new PriorityQueue<>();
         this.visited = new HashMap<>();
-        this.goalString = goalString;
+        TRIE.addStringsFromFile("DNAsequences.txt");
     }
 
-    public ArrayList<String> findShortestPath(String start) { // iterate until reaches goal or queue is empty
-        resetSearchParameters();
+    public ArrayList<String> findShortestPath(String start, String goal) { // iterate until reaches goal or queue is empty
+        resetSearchParameters(goal);
 
         if (start.length() != goalString.length()) {
             return null;
@@ -27,11 +30,10 @@ public class AlmostDijkstraSearch {
 
         while (!queue.isEmpty()) {
             current = iterateSearch();
-
             if (current == null) {
                 return null;
             }
-            else if (isGoalReached(current)) {
+            else if (isGoalString(current.dnaString)) {
                 break;
             }
         }
@@ -45,45 +47,56 @@ public class AlmostDijkstraSearch {
 
     public DnaState iterateSearch() { // Single iteration of the algorithm
         DnaState current = queue.poll();
-
         if (current == null) {
             return null;
         }
-
-        if (visited.get(current.dnaString) == current && !isGoalReached(current)) {
-            // Check if current state isn't a previous unoptimal or if it has already reached the goal
+        if (visited.get(current.dnaString) == current && !isGoalString(current.dnaString)) {
+            // Check first if current state isn't outdated or if it isn't already the goal string
             numExplored ++;
             addAdjacents(current);
         }
-
         return current;
     }
 
-    // HELPER METHODS ---------------------------------------------------------------
+    // ADDING ADJACENTS METHOD & HELPERS  ---------------------------------------------------------------
     private void addAdjacents(DnaState state) {
-        ArrayList<String> possibleStrings = state.getPossibleAdjacents();
+        String dnaString = state.dnaString;
 
-        for (String possibleString:possibleStrings) {
-            DnaState existing = visited.get(possibleString);
-
-            if (existing == null || state.steps + 1 < existing.steps) {
-                addNewState(possibleString, state);
+        for (int i = 0; i < state.length; i++) {
+            for (int ci = 0; ci < 4; ci ++) {
+                if (dnaString.charAt(i) == POSSIBLE_CHARS[ci]) {
+                    continue;
+                }
+                tryNewDnaString(state, i, POSSIBLE_CHARS[ci]);
             }
         }
     }
 
+    private void tryNewDnaString(DnaState state, int i, char c) { // Checks and tries to add new dna string
+        String dnaString = state.dnaString;
+        String modified = dnaString.substring(0, i) + c + dnaString.substring(i + 1, state.length);
+
+        if (!TRIE.search(modified) && !isGoalString(modified)) {
+            return;
+        }
+        DnaState existing = visited.get(modified);
+
+        if (existing == null || existing.steps > state.steps + 1) {
+            addNewState(modified, state);
+        }
+    }
+
+    // OTHER HELPERS ---------------------------------------------------------------
     private void addNewState(String dnaString, DnaState previous) {
         int numDifferentChars = DnaState.getNumDifferentChars(goalString, dnaString);
         DnaState newState = new DnaState(dnaString, previous, numDifferentChars);
 
         visited.put(dnaString, newState);
-
         queue.offer(newState);
     }
 
     private ArrayList<String> getPath(DnaState state) {
         ArrayList<String> path = new ArrayList<>();
-
         while (state != null) {
             path.add(state.dnaString);
             state = state.previous;
@@ -94,15 +107,12 @@ public class AlmostDijkstraSearch {
     }
 
     // Getters and Setters -----------------------------------------------------------
-    public void changeGoal(String goalString) {
+    private boolean isGoalString(String currentString) {
+        return currentString.equals(goalString);
+    }
+
+    private void resetSearchParameters(String goalString) {
         this.goalString = goalString;
-    }
-
-    private boolean isGoalReached(DnaState current) {
-        return current.dnaString.equals(goalString);
-    }
-
-    private void resetSearchParameters() {
         numExplored = 0;
         queue.clear();
         visited.clear();
